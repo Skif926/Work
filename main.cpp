@@ -1,106 +1,133 @@
 #include <iostream>
-#include <cstdint >
 using namespace std;
-
-class Power{
-private:
-    int Number1;
-    int Number2;
+int count=0;
+class Person{
+protected:
+    string Name,Sex;
+    short int Age,Heft;
 public:
-    Power(){
-        Number1 = 2;
-        Number2 = 5;
+    Person(string n,string s,short int a,short int h) : Name(n),Sex(s),Age(a),Heft(h) {count++;}
+    void setName(string name){
+        this->Name = name;
+//        cout <<"Имя сменилось на :" <<this->Name << endl;
     }
-    void set(int a1, int a2 ){
-        Number1 = a1;
-        Number2 = a2;
+//    void setSex(string *Sex){    //Мы в таком странном мире живём...
+//        this->Sex = *Sex;
+//        cout <<"Пол сменился на :" <<this->Sex << endl;
+//    }
+    void setAge(int age){
+        this->Age = age;
     }
-    void calculate(){
-        int a3=1;
-        for (int i=0; i<Number2 ;i++){a3 = a3*Number1;};
-        cout << a3<< endl;
+    void setHeft(int h){
+        this->Heft = h;
     }
+    void print() const { cout << Name << "  " << Sex << "  Возраст:" << Age << "  Вес:" << Heft << endl;}
 };
-class RGBA{
-  private:
-  std::uint8_t m_red,m_green,m_blue,m_alpha;
+class Student : public Person {
+protected:
+    short int Year;
 public:
-  RGBA(){
-    m_red=0;
-    m_green=0;
-    m_blue=0;
-    m_alpha=255;
-  }
-  RGBA(uint8_t red,uint8_t green,uint8_t blue,uint8_t alpha){
-      m_red=red;
-      m_green=green;
-      m_blue=blue;
-      m_alpha=alpha;
-  }
-  void print(){
-  cout << m_red<<"/"<<m_green<<"/"<<m_blue<<"/"<<m_alpha<< endl;
-  }
+    Student(string n,string s,short int a,short int h,short int y) : Person(n,s,a,h), Year(y)  {}
+    void setYear(int *x){this->Year=*x;}
+    void nextYear(){Year++;}
 
 };
-class Stack{
-private:
- int s_arr[10],count;
-public:
- void push(int i){
-     if (count <10 && count >=0){
-     s_arr[count]=i;
-     count++;
-     cout <<"true"<<endl;
-     }
-     else {cout <<"false"<<endl;}
- }
- void reset(){
-     count = 0;
-     for(int i=0;i<10;i++){s_arr[i]=0;};
- }
- void print(){
-     cout<<"( ";
-     for(int i=0;i<count;i++){
-         cout<<s_arr[i]<<" ";
-     };
-     cout<<")"<<endl;
- }
- void pop(){
- if (count>0){
-     s_arr[count]=0;
-     count--;
- }
- }
-};
-
-
-
-
-
-
-
-int main()
+void m1ain()
 {
-    Power Iam;
-    Iam.calculate();
-    RGBA a(1,2,34,4);
-    a.print();
-    Stack stack;
-        stack.reset();
-        stack.print();
+    Student man("Piter","M",18,78,1),woman("jesica","W",21,55,3);
+    woman.setName("Jesica");
+    man.print();
+    woman.print();
+    cout <<"Количество студентов :" <<count << endl;
+    //return 0;
+}
 
-        stack.push(3);
-        stack.push(7);
-        stack.push(5);
-        stack.print();
 
-        stack.pop();
-        stack.print();
-
-        stack.pop();
-        stack.pop();
-        stack.print();
-
-        return 0;
+class Fruit{
+protected:
+    string name,color;
+public:
+    Fruit(string n,string c) : name(n),color(c){}
+    void setName(string n){name=n;}
+    void setColor(string n){color=n;}
+    string getName(){return name;}
+    string getColor(){return color;}
 
 };
+class Apple : public Fruit{
+public:
+    Apple(string n) : Fruit("Apple",n) {}
+
+};
+class Banana : public Fruit{
+    public:
+    Banana() : Fruit("Banana","yellow") {}
+};
+class GrannySmith : public Apple{
+    public:
+    GrannySmith() : Apple("green"){setName("Granny Smith apple");}
+    void setName(string n){name=n;}
+};
+void m2ain()
+{
+    Apple a("red");
+    Banana b;
+    GrannySmith c;
+
+    std::cout << "My " << a.getName() << " is " << a.getColor() << ".\n";
+    std::cout << "My " << b.getName() << " is " << b.getColor() << ".\n";
+    std::cout << "My " << c.getName() << " is " << c.getColor() << ".\n";
+
+
+
+}
+class User{
+//   void //Разделить
+//   void //Еще
+//   void //Удвоить
+//   void //Хватит
+};
+class Dialer{
+//    void //открывает закрытую карту
+//    void //Еще
+};
+class Card{
+//    void //раздать карту
+};
+
+class coockies{}; //ставка
+
+void m3ain() {
+//    Правила
+//    Цель игрока - собрать руку, сумма очков в которой превышает сумму очков у дилера. Важно собрать не более 21 очков, в ином случае игрок проиграет (перебор).
+//    Для игры используется шесть стандартных колод из 52 карт. Для участия в игре игрок должен сделать ставку. После того как все ставки сделаны, дилер раздает игрокам по две карты в открытую, а себе одну открытую и одну закрытую карты.
+//    После того как игрок и дилер завершили брать карты, сравниваются значения финальных рук дилера и игрока. Если сумма очков у игрока больше, чем у дилера, то он получает выплату 1 к 1 от своей ставки. Если суммы очков равны (за исключением блэкджек), то это ничья и игроку возвращается его ставка. Если же дилер набрал больше очков, то игрок проигрывает.
+//    Блэкджек
+//    Если первые две карты в сумме дают 21 очко, то такая комбинация называется блэкджек. Если дилер собрал блэкджек, то все игроки проигрывают, кроме тех, у кого тоже блэкджек. Такой случай считается ничьей, и ставка возвращается игроку.
+//    Если игрок собрал блэкджек, а дилер нет, то игрок выигрывает и получает выплату 3 к 2 от своей ставки.
+//    Если открытая карта дилера стоит 10 очков, то дилер смотрит свою закрытую карту. В случае если собралась комбинация блэкджек, дилер открывает свои карты и раунд игры заканчивается.
+//    Действия игрока
+//    Если у дилера и игрока нет блэкджека, то, получив карты, игрок может выбрать одно из нескольких действий.
+//    ?Разделить?. Доступно, только если в руке две карты одного достоинства. Игрок дублирует свою ставку, разделяет руку на две, получая две дополнительные карты. Далее эти руки играют независимо.
+//    ?Еще?. Игрок берет дополнительную карту. Это действие можно повторять, пока сумма очков не превышает 21
+//    ?Удвоить?. Игрок удваивает свою ставку, берет ровно одну дополнительную карту и фиксирует свои карты.
+//    ?Хватит?. Игрок фиксирует свои карты.
+//    Если игрок набрал более 21 очков, то он проигрывает раунд.
+//    Дилер
+//    После того как игроки зафиксировали свои карты, дилер открывает закрытую карту.
+//    При необходимости дилер берет дополнительные карты до тех пор, пока сумма очков не будет 17 или выше. Если количество очков дилера превысит 21, то все невыбывшие игроки автоматически выигрывают, вне зависимости от количества очков.
+//    Страховка
+//    Особый случай: если у дилера открытая карта туз, то игрокам будет предложена дополнительная ставка ?страховка?, равная половине их основной ставки. После того как все игроки приняли решение, дилер смотрит свою закрытую карту. В случае, если дилер собрал блэкджек, то по ставкам ?страховка? выплачивается выигрыш 2 к 1. Если у дилера не блэкджек, ставки ?страховка? уходят в банк, игра продолжается как обычно.
+
+
+
+}
+
+
+
+int main(){
+m1ain();
+m2ain();
+
+return 0;
+}
