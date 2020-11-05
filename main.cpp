@@ -1,106 +1,201 @@
 #include <iostream>
-#include <cstdint >
+#include <math.h>
 using namespace std;
 
-class Power{
+
+class Figure{
+protected:
+    virtual void area()=0;
+    void printS(){cout<<"Площадь равна :"<<S<<endl;}
+    float a,b,S;
+    int variant;
+    Figure(float a,float b,int i):a(a),b(b),variant(i){}
+    ~Figure(){}
+};
+class Parallelogram : public Figure{
+public:
+    float h,angle,d1,d2;
+    void area() override {
+        switch (variant) {
+        case 1:
+            S = a * h;//Формула площади параллелограмма по длине стороны и высоте
+        case 2:
+            S = a * b * sin(angle);//Формула площади параллелограмма по двум сторонам и углу между ними
+        case 3:
+            S = 1/2*d1*d2*sin(angle);//Формула площади параллелограмма по двум диагоналям и углу между ними
+        default:
+            cout << "Такого варианта нет" <<endl;
+        }
+    }
+    Parallelogram(float a,float b,float h,float d1,float d2,float angle,int i):Figure(a,b,i),h(h),angle(angle),d1(d1),d2(d2){}
+    ~Parallelogram(){printS();}
+};
+class Circle : public Figure{
+protected:
+    const double PI = 3.141592653589793;
+public:
+    Circle(float a,float b,int i):Figure(a,b,i){}
+    ~Circle(){printS();}
+    void area()override{
+        switch (variant) {
+        case 1:
+            S = PI*pow(a,2); //Формула площади круга через радиус
+        case 2:
+            S = 1/4*PI*pow(b,2);//Формула площади круга через диаметр
+        default:
+            cout << "Такого варианта нет" <<endl;
+        }
+
+
+
+    }
+};
+class Rectangle : public Parallelogram{
+public:
+    Rectangle(float a,float b):Parallelogram(a,b,0,0,0,0,0){}
+    ~Rectangle(){printS();}
+    void area()override{
+        S = a*b;
+    }
+};
+class Square : public Parallelogram{
+public:
+    Square(float a):Parallelogram(a,0,0,0,0,0,0){}
+    ~Square(){printS();}
+    void area()override{
+        S = pow(a,2);
+    }
+};
+class Rhombus : public Parallelogram{
+public:
+    Rhombus(float a,float h,float d1,float d2,float angle,int i):Parallelogram(a,0,h,d1,d2,angle,i){}
+    ~Rhombus(){printS();}
+    void area()override{
+        switch (variant) {
+        case 1:
+            S = a*h;//Формула площади ромба по длине стороны и высоте
+        case 2:
+            S = pow(a,2)* sin(angle);//Формула площади ромба по длине стороны и углу
+        case 3:
+            S = 1/2*d1*d2;//Формула площади ромба по длинам его диагоналей
+        default:
+            cout << "Такого варианта нет" <<endl;
+        }
+
+
+
+    }
+};
+
+class Car{
+protected:
+    string company,model;
+public:
+    void printC()const {cout<<"Класс Car закрыт Компания:"<<company<<" Модель:"<<model<<endl;}
+    void printO()const {cout<<"Класс Car открыт Компания:"<<company<<" Модель:"<<model<<endl;}
+    Car(string company,string model):company(company),model(model){printO();}
+    ~Car(){printC();}
+};
+class PassengerCar :virtual public Car{
+public:
+    PassengerCar(string a,string b):Car(a,b){printO();}
+    ~PassengerCar(){printC();}
+    void printC()const  {cout<<"Класс PassengerCar закрыт Компания:"<<company<<" Модель:"<<model<<endl;}
+    void printO()const {cout<<"Класс PassengerCar открыт Компания:"<<company<<" Модель:"<<model<<endl;}
+};
+class Bus :virtual public Car{
+public:
+    Bus(string a,string b):Car(a,b){printO();}
+    ~Bus(){printC();}
+    void printC()const  {cout<<"Класс Bus закрыт Компания:"<<company<<" Модель:"<<model<<endl;}
+    void printO()const {cout<<"Класс Bus открыт Компания:"<<company<<" Модель:"<<model<<endl;}
+};
+class Minivan :public PassengerCar,public Bus{
+public:
+    Minivan(string a,string b):Car(a,b),PassengerCar(a,b),Bus(a,b){printO();}
+    ~Minivan(){printC();}
+    void printC()const{cout<<"Класс Minivan закрыт Компания:"<<company<<" Модель:"<<model<<endl;};
+    void printO()const {cout<<"Класс Minivan открыт Компания:"<<company<<" Модель:"<<model<<endl;}
+};
+
+class Fraction{
 private:
-    int Number1;
-    int Number2;
+    int a,b;
+    //float count()const {return a/b;}
 public:
-    Power(){
-        Number1 = 2;
-        Number2 = 5;
-    }
-    void set(int a1, int a2 ){
-        Number1 = a1;
-        Number2 = a2;
-    }
-    void calculate(){
-        int a3=1;
-        for (int i=0; i<Number2 ;i++){a3 = a3*Number1;};
-        cout << a3<< endl;
-    }
-};
-class RGBA{
-  private:
-  std::uint8_t m_red,m_green,m_blue,m_alpha;
-public:
-  RGBA(){
-    m_red=0;
-    m_green=0;
-    m_blue=0;
-    m_alpha=255;
-  }
-  RGBA(uint8_t red,uint8_t green,uint8_t blue,uint8_t alpha){
-      m_red=red;
-      m_green=green;
-      m_blue=blue;
-      m_alpha=alpha;
-  }
-  void print(){
-  cout << m_red<<"/"<<m_green<<"/"<<m_blue<<"/"<<m_alpha<< endl;
-  }
-
-};
-class Stack{
-private:
- int s_arr[10],count;
-public:
- void push(int i){
-     if (count <10 && count >=0){
-     s_arr[count]=i;
-     count++;
-     cout <<"true"<<endl;
-     }
-     else {cout <<"false"<<endl;}
- }
- void reset(){
-     count = 0;
-     for(int i=0;i<10;i++){s_arr[i]=0;};
- }
- void print(){
-     cout<<"( ";
-     for(int i=0;i<count;i++){
-         cout<<s_arr[i]<<" ";
-     };
-     cout<<")"<<endl;
- }
- void pop(){
- if (count>0){
-     s_arr[count]=0;
-     count--;
- }
- }
+    Fraction(int a,int b):a(a),b(b){}
+    int getA()const {return a;}
+    int getB()const {return b;}
+    void getcount()const {cout<<a<<"/"<<b<<endl;}
+    void setA(int a){this->a=a;}
+    void setB(int b){this->b=b;}
 };
 
+Fraction operator+ (const Fraction &a,const Fraction &b){return Fraction((a.getA()*b.getB()+b.getA()*a.getB()),(a.getB()*b.getB()));}
+Fraction operator- (const Fraction &a,const Fraction &b){return Fraction((a.getA()*b.getB()-b.getA()*a.getB()),(a.getB()*b.getB()));}
+Fraction operator* (const Fraction &a,const Fraction &b){return Fraction((a.getA()*b.getA()),(a.getB()*b.getB()));}
+Fraction operator/ (const Fraction &a,const Fraction &b){return Fraction((a.getA()*b.getB()),(a.getB()*b.getA()));}
+Fraction operator- (const Fraction &a){return Fraction((a.getA()*(-1)),(a.getB()));}
+bool operator== (const Fraction &a,const Fraction &b){return a.getA()*b.getB()==b.getA()*a.getB();}
+bool operator!= (const Fraction &a,const Fraction &b){return a.getA()*b.getB()!=b.getA()*a.getB();}
+//bool operator< (const Fraction &a,const Fraction &b){return a.getA()*b.getB()<b.getA()*a.getB();}
+//bool operator> (const Fraction &a,const Fraction &b){return a.getA()*b.getB()>b.getA()*a.getB();}
+//bool operator<= (const Fraction &a,const Fraction &b){return a.getA()*b.getB()<=b.getA()*a.getB();}
+//bool operator>= (const Fraction &a,const Fraction &b){return a.getA()*b.getB()>=b.getA()*a.getB();}
+bool operator< (const Fraction &a,const Fraction &b){return b.getA()*a.getB()>=a.getA()*b.getB();}
+bool operator> (const Fraction &a,const Fraction &b){return b.getA()*a.getB()<=a.getA()*b.getB();}
+bool operator<= (const Fraction &a,const Fraction &b){return b.getA()*a.getB()>a.getA()*b.getB();}
+bool operator>= (const Fraction &a,const Fraction &b){return b.getA()*a.getB()<a.getA()*b.getB();}
 
-
+class Card{
+protected:
+    enum suit{Pika,Trefa,Bubna,Cherva};
+    enum values{point1,point2,point3,point4,point5,point6,point7,point8,point9,point10,point11}value;
+    bool i=0;
+public:
+    Card():value(point4){}
+    void Flip(){if (i)i=false; else i=true;}
+    int GetValue(){
+        switch (value) {
+        case point1:
+            return 1;
+        case point2:
+            return 2;
+        case point3:
+            return 3;
+        case point4:
+            return 4;
+        case point5:
+            return 5;
+        case point6:
+            return 6;
+        case point7:
+            return 7;
+        case point8:
+            return 8;
+        case point9:
+            return 9;
+        case point10:
+            return 10;
+        case point11:
+            return 11;
+        }
+        return 0;
+    }
+};
 
 
 
 
 int main()
 {
-    Power Iam;
-    Iam.calculate();
-    RGBA a(1,2,34,4);
-    a.print();
-    Stack stack;
-        stack.reset();
-        stack.print();
+Minivan y("Моторола","Зета7");
+//delete y;  ошибка: cannot delete expression of type 'Minivan'  Как исправить ?
+Fraction x1(3,7),x2(9,2);
+Fraction x3 = x1 / x2;
+if (x1<x2)x3.getcount();
+Card One;
+cout<<One.GetValue()<<endl;
 
-        stack.push(3);
-        stack.push(7);
-        stack.push(5);
-        stack.print();
-
-        stack.pop();
-        stack.print();
-
-        stack.pop();
-        stack.pop();
-        stack.print();
-
-        return 0;
-
-};
+    return 0;
+}
