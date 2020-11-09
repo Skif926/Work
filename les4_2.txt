@@ -1,0 +1,156 @@
+﻿#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <assert.h>
+using namespace std;
+
+
+class ArrayInt{
+private:
+    int m_lenght;
+    int *m_data;
+public:
+    ArrayInt():m_lenght(0),m_data(nullptr){}
+    ArrayInt(int lenght):m_lenght(0){
+        assert(lenght >=0);
+        if (lenght == 0) m_data = nullptr;
+        else {m_data = new int[lenght];
+        resize(lenght);}
+    }
+    //~ArrayInt(){delete [] m_data;}
+    void erase(){
+        delete[] m_data;
+        m_data= nullptr;
+        m_lenght=0;
+    }
+    int getLenght() const{return m_lenght;}
+    int &operator[](int index){assert(index>=0 && index < m_lenght); return m_data[index];}
+    void resize(int newleght){
+        if (newleght == m_lenght)return;
+        if (newleght <=0){erase();return;}
+        int *data= new int[newleght];
+        if (newleght > 0){
+            int elementsC = (newleght > m_lenght) ? m_lenght : newleght;
+            for (int i = 0; i<elementsC;++i)
+                data[i] = m_data[i];
+            if (elementsC<newleght) {
+                for (int i = elementsC; i<newleght;++i)
+                    data[i] = 0;
+            }
+        }
+        delete [] m_data;
+        m_data = data;
+        m_lenght = newleght;
+    }
+    void ins (int value,int index){
+        assert(index>=0 && index < m_lenght);
+        int *data = new int(m_lenght+1);
+        for (int i=0;i<index;i++) data[i]=m_data[i];
+        data [index] = value;
+        for (int i=index;i<m_lenght;i++) data[i+1]=m_data[i];
+        delete [] m_data;
+        m_data = data;
+        m_lenght++;
+    }
+    void push_back(int value){ins(value,m_lenght);}
+    void del (int index){
+        assert(index>=0 && index < m_lenght);
+        int *data = new int(m_lenght-1);
+        for (int i=0;i<index;i++) data[i]=m_data[i];
+        for (int i=index;i<m_lenght;i++) data[i]=m_data[i+1];
+        delete [] m_data;
+        m_data = data;
+        m_lenght--;
+    }
+    void pop_back(){del(m_lenght-1);}
+    void pop_front(){del(0);}
+    void sort(int a,int b){
+
+       assert((a>=0 && a < m_lenght)&&(b>=0 && b < m_lenght));
+       if (a>b) {int i=a;a=b;b=i;}
+       for (int i=a;i<b;i++){
+           for (int y=a;y<b-i;y++){
+               if (m_data[y]>m_data[i]) {
+                  int temp = m_data[y];
+                   m_data[y]=m_data[y+1];
+                   m_data[y+1] = temp;}
+           }
+       }
+    };
+    void print(){
+        cout<<endl;
+        for (int i=0;i<m_lenght;i++)
+            cout<<m_data[i]<<" ";
+        cout<<endl;
+    }
+
+};
+class Card{
+protected:
+    enum suit{Pika=1,Trefa,Bubna,Cherva}suit;
+    enum values{point1=1,point2,point3,point4,point5,point6,point7,point8,point9,point10,point11}value;
+    bool i=0;
+public:
+    Card():suit(Pika),value(point4){}
+    void Flip(){if (i)i=false; else i=true;}
+    int GetValue(){return value;}
+    int GetSuit(){return suit;}
+
+
+};
+
+class Hand{
+protected:
+    vector<Card*>v;
+public:
+    void Add(Card *card){
+        v.push_back(card);
+    }
+    void Clear(){
+        v.clear();
+        cout<<"Вектор обнулён"<<endl;
+    }
+    void GetValue(){
+        for(int i=0;i<v.size();i++){
+            cout<<"Карта "<<v[i]->GetValue()<<"  Масть "<<v[i]->GetSuit()<<endl;
+        }
+    }
+};
+
+int main()
+{
+    ArrayInt arr(5);
+    arr.print();
+    //arr.resize(3);
+    arr.ins(3,2);
+    arr.print();
+    arr.sort(0,5);
+    arr.print();
+cout<<endl;
+    vector<int>v{1,5,5,5,6,7,7,8,9,15,20,5,15};
+    sort(v.begin(),v.end());
+    int count = v.size();
+    for (int i=0;i<v.size();i++){
+        cout<<v[i]<<" ";
+    }
+    cout<<endl;
+    for (int i=0;i<v.size()-1;i++){
+        if (v[i]==v[i+1]) count-=1;
+    }
+    cout<<v.size()-count<<endl;
+
+Hand a;
+Card b,c;
+a.Add(&b);
+a.Add(&c);
+a.GetValue();
+a.Clear();
+a.Add(&c);
+a.GetValue();
+
+
+
+
+
+    return 0;
+}
