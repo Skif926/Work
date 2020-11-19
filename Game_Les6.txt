@@ -1,0 +1,252 @@
+﻿#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <assert.h>
+using namespace std;
+class Card{
+protected:
+    enum suit{Pika=1,Trefa,Bubna,Cherva}suit;
+    enum values{Ace=1,Two,Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,King}value;
+    bool i=true;
+public:
+    Card():suit(Pika),value(Jack){}
+    Card(int y,int z){
+        switch (y) {
+        case 0:
+            suit=Pika;
+            break;
+        case 1:
+            suit=Trefa;
+            break;
+        case 2:
+            suit=Bubna;
+            break;
+        case 3:
+            suit=Cherva;
+            break;
+            }
+        switch (z) {
+        case 0:
+            value=Ace;
+            break;
+        case 1:
+            value=Two;
+            break;
+        case 2:
+            value=Three;
+            break;
+        case 3:
+            value=Four;
+            break;
+        case 4:
+            value=Five;
+            break;
+        case 5:
+           value=Six;
+            break;
+        case 6:
+            value=Seven;
+            break;
+        case 7:
+            value=Eight;
+            break;
+        case 8:
+            value=Nine;
+            break;
+        case 9:
+            value=Ten;
+            break;
+        case 10:
+            value=Jack;
+            break;
+        case 11:
+            value=Queen;
+            break;
+        case 12:
+            value=King;
+            break;
+
+        }
+    }
+    bool getI(){return i;}
+    void Flip(){if (i)i=false; else i=true;}
+    int GetValue(){return value;}
+    int GetSuit(){return suit;}
+    friend ostream &operator<< (ostream &out, const Card &card);
+};
+ostream &operator<< (ostream &out, const Card &card){
+    string cardSurName[4]={"Pika","Trefa","Bubna","Cherva"};
+    string cardName[13]={"Ace","Two","Three", "Four", "Five", "Six", "Seven", "Eight"," Nine", "Ten", "Jack","Queen","King"};
+    if (card.i)out<<cardName[(card.value)-1]<<" of "<<cardSurName[(card.suit)-1]<<endl;
+    else out<<"XX"<<endl;
+    return out;
+}
+
+
+class Hand{
+protected:
+    vector<Card*>v;
+public:
+    void Add(Card *card){
+        v.push_back(card);
+    }
+    void Clear(){
+        v.clear();
+        v.shrink_to_fit();
+        //cout<<"Вектор обнулён"<<endl;
+    }
+    int GetValue()const{
+        int count=0;
+        for(int i=0;i<v.size();i++) {
+            if ((v[i]->GetValue()==1)&& (count<=10)) count+=11;
+            else if (v[i]->GetValue()>=10)count+=10;
+            else count+=v[i]->GetValue();
+            //cout<<"Число "<<i<<"="<<v[i]->GetValue()<<endl;
+        }
+    return count;
+    }
+};
+
+class GenericPlayer: public Hand{
+protected:
+    string name="Игрок";
+public:
+    string getName(){return name;}
+    GenericPlayer(string names):name(names){}
+    virtual bool IsHitting()const=0;
+    bool IsBoosted(){if(GetValue()>21)return true;else return false;}
+    void Bust(){if(IsBoosted())cout<<"У игрока "<<name<<" перебор "<<GetValue()<<"очко(а)"<<endl; }
+    friend ostream &operator<< (ostream &out, const GenericPlayer &Player);
+};
+ostream &operator<< (ostream &out, const GenericPlayer &Player){
+    out<<Player.name<<endl;
+for(int i=0;i<Player.v.size();i++) {
+    out<<*Player.v[i];  // Выводит 0x22fdf4 вместо : (XX) или (1  11)
+}
+if (Player.v[0]->getI())
+    out<<Player.GetValue()<<endl;
+    return out;
+}
+class Player: public GenericPlayer{
+public:
+    Player(string names):GenericPlayer(names){}
+    virtual bool IsHitting() const{
+        string s;
+        cout<<"Взять ещё карту y/n"<<endl;
+        while (true){
+            cin>>s;
+            if ((s=="y")|(s=="Y"))return true;
+            else if((s=="n")|(s=="N"))return false;
+            else cout<<"Ошибка повторите ввод"<<endl<<"Взять ещё карту y/n"<<endl;
+        }
+    }
+    void Win() const {cout<<"Игрок "<<name<<" победил!"<<endl;}
+    void Lose() const{cout<<"Игрок "<<name<<" проиграл :("<<endl;}
+    void Push() const{cout<<"Игрок "<<name<<" сыграл вничью"<<endl;}
+};
+
+class House:public GenericPlayer{
+public:
+    House():GenericPlayer("House"){}
+    virtual bool IsHitting()const{
+        return GetValue()<=16;
+    }
+    void FlipFirstCard(){v[0]->Flip();}
+};
+class Deck:public Hand{
+protected:
+
+public:
+    Deck(){}
+    void Populate(){
+        for (int y=0;y<4;y++){
+            for (int z=0;z<13;z++){
+                Card  *b(new Card(y,z));
+                Add(b);
+            }
+        }
+    }
+    void Shuffle(){random_shuffle(begin(v),end(v));}
+    void Deal(Hand& aHand){
+        assert((v.size())>0);
+        aHand.Add(v.back());
+        v.pop_back();
+    }
+    void AddltionalCards(GenericPlayer& aGenerlcPlayer){
+        assert((v.size())>0);
+        L1:
+        if ((v.size()>0)&(aGenerlcPlayer.IsHitting())){
+            Deal(aGenerlcPlayer);
+            cout<<aGenerlcPlayer.GetValue()<<endl;
+            goto L1;
+        }
+    }
+};
+class Game{
+private:
+    Deck d;
+    House h;
+    vector<Player*>n1;
+public:
+    Game(vector<string> n){
+        for (int i=0;i<n.size();i++){
+            Player *b(new Player(n[i]));
+            n1.push_back(b);
+        }
+        d.Populate();
+        d.Shuffle();
+    }
+    void Play(){
+        for (int i=0;i<n1.size();i++){
+        d.Deal(*n1[i]);
+        d.Deal(*n1[i]);
+        cout<<*n1[i];
+        }
+        d.Deal(h);
+        d.Deal(h);
+        h.FlipFirstCard();
+        cout<<h<<endl;
+        for (int i=0;i<n1.size();i++){
+            cout<<n1[i]->getName()<<endl;
+            d.AddltionalCards(*n1[i]);
+        }
+        h.FlipFirstCard();
+        d.AddltionalCards(h);
+        for (int i=0;i<n1.size();i++){
+            cout<<*n1[i];
+        }
+        cout<<h<<endl;
+        for (int i=0;i<n1.size();i++){
+            if ((n1[i]->GetValue()>h.GetValue())&(n1[i]->GetValue()<=21)|h.GetValue()>21)n1[i]->Win();
+            else if ((n1[i]->GetValue()==h.GetValue())|((n1[i]->GetValue()>21)&(h.GetValue()>21)))n1[i]->Push();
+            else n1[i]->Lose();
+        }
+
+
+
+    }
+};
+
+
+int main()
+{
+    vector<string> name ={"Витя","Андрей"};
+
+    string s;
+    do {
+        Game game(name);
+        game.Play();
+        cout<<"Сыграть ещё партыю? y/n"<<endl;
+        cin>>s;
+        cout<<endl<<endl<<endl<<endl;
+    } while ((s=="y")|(s=="Y"));
+
+
+
+
+
+
+
+
+    return 0;
+}
