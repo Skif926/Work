@@ -1,0 +1,110 @@
+﻿#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+class Card{
+protected:
+    enum suit{Pika=1,Trefa,Bubna,Cherva}suit;
+    enum values{Tyz=1,Two,Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,King}value;
+    bool i=false;
+public:
+    Card():suit(Pika),value(Jack){}
+    void Flip(){if (i)i=false; else i=true;}
+    int GetValue(){return value;}
+    int GetSuit(){return suit;}
+    friend ostream &operator<< (ostream &out, const Card &card);
+};
+ostream &operator<< (ostream &out, const Card &card){
+    if (card.i)out<<card.suit<<"  "<<card.value<<endl; // Как вывести Pika Jack?
+    else out<<"XX"<<endl;
+    return out;
+}
+
+
+class Hand{
+protected:
+    vector<Card*>v;
+public:
+    void Add(Card *card){
+        v.push_back(card);
+    }
+    void Clear(){
+        v.clear();
+        v.shrink_to_fit();
+        //cout<<"Вектор обнулён"<<endl;
+    }
+    int GetValue()const{
+        int count=0;
+        for(int i=0;i<v.size();i++) {
+            if ((v[i]->GetValue()==1)&& (count<=10)) count+=11;
+            else if (v[i]->GetValue()>=10)count+=10;
+            else count+=v[i]->GetValue();
+            //cout<<"Число "<<i<<"="<<v[i]->GetValue()<<endl;
+        }
+    return count;
+    }
+};
+
+class GenericPlayer: public Hand{
+protected:
+    string name="Игрок";
+public:
+    virtual bool IsHitting()const=0;
+    bool IsBoosted(){if(GetValue()>21)return true;else return false;}
+    void Bust(){if(IsBoosted())cout<<"У игрока "<<name<<" перебор "<<GetValue()<<"очко(а)"<<endl; }
+    friend ostream &operator<< (ostream &out, const GenericPlayer &Player);
+};
+ostream &operator<< (ostream &out, const GenericPlayer &Player){
+    out<<Player.name<<endl;
+for(int i=0;i<Player.v.size();i++) {
+    out<<Player.v[i]<<endl;  // Выводит 0x22fdf4 вместо : (XX) или (1  11)
+}
+    out<<Player.GetValue()<<endl;
+    return out;
+}
+class Player: public GenericPlayer{
+public:
+    virtual bool IsHitting() const{
+        string s;
+        cout<<"Взять ещё карту y/n"<<endl;
+        while (true){
+            cin>>s;
+            if ((s=="y")|(s=="Y"))return true;
+            else if((s=="n")|(s=="N"))return false;
+            else cout<<"Ошибка повторите ввод"<<endl<<"Взять ещё карту y/n"<<endl;
+        }
+    }
+    void Win() const {cout<<"Игрок "<<name<<" победил!"<<endl;}
+    void Lose() const{cout<<"Игрок "<<name<<" проиграл :("<<endl;}
+    void Push() const{cout<<"Игрок "<<name<<" сыграл вничью"<<endl;}
+};
+
+class House:public GenericPlayer{
+public:
+    virtual bool IsHitting()const{
+//        while(GetValue()<=16){Add(/*GetRandCard()*/);}
+        return false;
+    }
+    void FlipFirstCard(){v[0]->Flip();}
+};
+
+
+
+
+int main()
+{
+    Player a;
+    //Hand a;
+    Card b;
+     cout<<b;
+     b.Flip();
+     cout<<b;
+    a.Add(&b);
+    a.Add(&b);
+    cout<<a;
+    cout<<a.GetValue()<<endl;
+    a.Clear();
+    a.Add(&b);
+    cout<<a.GetValue()<<endl;
+    return 0;
+}

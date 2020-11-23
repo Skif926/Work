@@ -1,0 +1,26 @@
+﻿#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int printIN(){
+cout<<"Введите целое цисло типа int"<<endl;
+int s;
+while (!(cin>>s) || cin.get() != '\n'){
+    cout<<"Ошибка, введите целое цисло типа int"<<endl;
+    cin.clear();
+    cin.sync();
+}
+cout<<"Введенное число:"<<s<<endl;
+return 0;
+}
+ostream&  endll(ostream& endll){
+    endll<<endl<<endl;
+    return endll;
+}
+int main()
+{
+    printIN();
+    cout<<"1"<<endll;
+    cout<<"1";
+    return 0;
+}
