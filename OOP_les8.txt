@@ -1,0 +1,102 @@
+﻿#include <iostream>
+
+using namespace std;
+
+
+template <typename t,class t2>
+double division(t a,t2 b){
+        if (b==0)throw "Делитель равен нулю";
+        return a/b;
+}
+class Ex{
+private:
+public:
+    double x;
+    Ex(double a):x(a){}
+};
+class Bar{
+private:
+    double y;
+public:
+    Bar():y(0){}
+    void set(double a){
+        if (y+a>100)  throw Ex(a*y);
+        else {y=a; cout<<y<<endl;}
+    }
+};
+class Robot{
+private:
+    int a[11][11]={{0},{0}};
+    int x,y;
+public:
+    int getX(){return x;}
+    int getY(){return y;}
+    Robot():x(5),y(5){a[5][5]=1;};
+    void move(int a,int b){
+        if (((x+a)>=11 | (y+b)>=11)|((x+a)<0 | (y+b)<0)) throw "OffTheField";
+        this->a[x][y]=0;
+        x=x+a;
+        y=y+b;
+        this->a[x][y]=1;
+
+    }
+    void print(){
+        static int count=0;
+        for (int i=0;i<11;i++){
+            for (int y=0;y<11;y++){
+                if (a[i][y]==1){
+                    cout<<" X ";
+                    x=i;
+                    this->y=y;
+                }
+                else cout<<"[ ]";
+            }
+            cout<<endl;
+        }
+        count++;
+        cout<<"Ход "<<count<<endl;
+    }
+};
+
+
+
+int main()
+{
+    try {
+        cout << division(true,true) << endl;
+    }  catch (const char* a) {
+        cout<<a<<endl;
+    }
+    Bar a1;
+    double s;
+
+    do {
+        try {
+            cin>>s;
+            a1.set(s);
+        }catch (Ex a) {cout<<"Error Ex x="<<a.x<<endl;}
+    }while (!(s==0));
+
+    Robot a;
+    int x,y;
+    do {
+        a.print();
+        try {
+            cout<<endl<<"Для выхода  введите 0 0";
+            cout<<endl<<"Движение по вертикали ";
+            cin>>x;
+            cout<<endl<<"Движение по горизонтали ";
+            cin>>y;
+            if ((a.getX()+x<0)|
+                (a.getX()+x>11)|
+                (a.getY()+y<0)|
+                (a.getY()+y>11))throw "IllegalCommand";
+
+        a.move(x,y);
+        }
+        catch (const char * a) {cout<<"Error "<<a<<endl;}
+    }while (!((x==0)&(y==0)));
+
+
+    return 0;
+}
